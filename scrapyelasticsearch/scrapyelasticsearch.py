@@ -63,6 +63,23 @@ class ElasticSearchPipeline(object):
 
             return es
 
+        if auth_type == 'IAM':
+            from requests_aws4auth import AWS4Auth
+            from elasticsearch import RequestsHttpConnection
+            service = 'es'
+            awsauth = AWS4Auth(crawler_settings['ELASTICSEARCH_AWS_ACCESS_KEY'],
+                               crawler_settings['ELASTICSEARCH_AWS_SECRET_KEY'],
+                               crawler_settings['ELASTICSEARCH_AWS_REGION'],
+                               service)
+            es = Elasticsearch(hosts=es_servers,
+                               http_auth=awsauth,
+                               use_ssl=True,
+                               verify_certs=True,
+                               connection_class=RequestsHttpConnection,
+                               timeout=es_timeout)
+
+            return es
+
         es_settings = dict()
         es_settings['hosts'] = es_servers
         es_settings['timeout'] = es_timeout
