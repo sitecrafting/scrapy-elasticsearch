@@ -68,8 +68,8 @@ class ElasticSearchPipeline(object):
 
         vers = cls._get_version(es)
 
-        # We can refactor into data-driven when we get more than a few rules.
-        if vers.major < 7:
+        # Require only if version is less than 6.2.d.
+        if vers.major < 6 or (vers.major == 6 and vers.minor < 2):
             require_setting('ELASTICSEARCH_TYPE', vers)
 
     @classmethod
