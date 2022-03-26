@@ -23,11 +23,13 @@ from six import string_types
 import logging
 import hashlib
 import types
-
+import re
+from collections import namedtuple
 
 class InvalidSettingsException(Exception):
     pass
 
+_VersionInfo = namedtuple('_VersionInfo', ['major', 'minor', 'patch', 'full'])
 
 class ElasticSearchPipeline(object):
     settings = None
@@ -40,10 +42,35 @@ class ElasticSearchPipeline(object):
             if settings[setting_key] is None:
                 raise InvalidSettingsException('%s is not defined in settings.py' % setting_key)
 
-        required_settings = {'ELASTICSEARCH_INDEX', 'ELASTICSEARCH_TYPE'}
+        required_settings = {'ELASTICSEARCH_INDEX'}
 
         for required_setting in required_settings:
             validate_setting(required_setting)
+
+    @staticmethod
+    def _get_version(es):
+        info = es.info()
+        vers = info['version']['number']
+        match = re.match('(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)', vers)
+        major_num = int(match['major'])
+        minor_num = int(match['minor'])
+        patch_num = int(match['patch'])
+        return _VersionInfo(major_num, minor_num, patch_num, vers)
+
+    @classmethod
+    def validate_vers_spec_settings(cls, settings, es):
+        """Validate with version-specific rules
+        """
+        def require_setting(setting_key, version):
+            if settings[setting_key] is None:
+                raise InvalidSettingsException('%s is not defined in settings.py when server version is %s'
+                                               % (setting_key, version.full))
+
+        vers = cls._get_version(es)
+
+        # Require only if version is less than 6.2.d.
+        if vers.major < 6 or (vers.major == 6 and vers.minor < 2):
+            require_setting('ELASTICSEARCH_TYPE', vers)
 
     @classmethod
     def init_es_client(cls, crawler_settings):
@@ -88,6 +115,7 @@ class ElasticSearchPipeline(object):
 
         cls.validate_settings(ext.settings)
         ext.es = cls.init_es_client(crawler.settings)
+        cls.validate_vers_spec_settings(ext.settings, ext.es)
         return ext
 
     def process_unique_key(self, unique_key):
@@ -127,9 +155,12 @@ class ElasticSearchPipeline(object):
 
         index_action = {
             '_index': index_name,
-            '_type': self.settings['ELASTICSEARCH_TYPE'],
             '_source': dict(item)
         }
+
+        # The ES roadmap migrates to a typeless API with ES 7 and later.
+        if 'ELASTICSEARCH_TYPE' in self.settings:
+            index_action['_type'] = self.settings['ELASTICSEARCH_TYPE']
 
         if self.settings['ELASTICSEARCH_UNIQ_KEY'] is not None:
             item_id = self.get_id(item)
