@@ -174,6 +174,7 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
+        # bulk send
         helpers.bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
