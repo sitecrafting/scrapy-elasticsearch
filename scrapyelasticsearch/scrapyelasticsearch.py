@@ -159,7 +159,6 @@ class ElasticSearchPipeline(object):
         }
 
         logging.info('Well well well, HERE.')
-        logging.info('%s', index_action.json())
 
         # The ES roadmap migrates to a typeless API with ES 7 and later
         if 'ELASTICSEARCH_TYPE' in self.settings:
@@ -169,6 +168,8 @@ class ElasticSearchPipeline(object):
             item_id = self.get_id(item)
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
+
+        logging.info('Item to send: %s', index_action)
 
         self.items_buffer.append(index_action)
 
