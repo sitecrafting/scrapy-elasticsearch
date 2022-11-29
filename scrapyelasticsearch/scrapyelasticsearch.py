@@ -158,7 +158,7 @@ class ElasticSearchPipeline(object):
             '_source': dict(item)
         }
 
-        # The ES roadmap migrates to a typeless API with ES 7 and later.
+        # The ES roadmap migrates to a typeless API with ES 7 and later
         if 'ELASTICSEARCH_TYPE' in self.settings:
             index_action['_type'] = self.settings['ELASTICSEARCH_TYPE']
 
