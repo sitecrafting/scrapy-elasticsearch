@@ -176,7 +176,7 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        logging.info('BULK SEND THESE ITEMS TO ES: %s', index_action)
+        logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
         helpers.streaming_bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
