@@ -158,8 +158,6 @@ class ElasticSearchPipeline(object):
             '_source': dict(item)
         }
 
-        logging.info('Well well well, HERE.')
-
         # The ES roadmap migrates to a typeless API with ES 7 and later
         if 'ELASTICSEARCH_TYPE' in self.settings:
             index_action['_type'] = self.settings['ELASTICSEARCH_TYPE']
@@ -169,7 +167,7 @@ class ElasticSearchPipeline(object):
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
 
-        logging.info('Item to send: %s', index_action)
+        logging.info('SEND THIS ITEM TO ES: %s', index_action)
 
         self.items_buffer.append(index_action)
 
@@ -178,7 +176,8 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        helpers.bulk(self.es, self.items_buffer)
+        logging.info('BULK SEND THESE ITEMS TO ES: %s', index_action)
+        helpers.streaming_bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
