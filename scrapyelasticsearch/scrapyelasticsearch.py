@@ -167,7 +167,7 @@ class ElasticSearchPipeline(object):
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
 
-        logging.info('SEND THIS ITEM TO ES: %s', index_action)
+        # logging.info('SEND THIS ITEM TO ES: %s', index_action)
 
         self.items_buffer.append(index_action)
 
@@ -176,7 +176,7 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
+        # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
         helpers.streaming_bulk(self.es, self.items_buffer)
 
     def process_item(self, item, spider):
