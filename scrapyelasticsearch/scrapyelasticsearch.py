@@ -181,6 +181,8 @@ class ElasticSearchPipeline(object):
 
         index_ok = False
         for ok, result in iterator:
+            logging.info('Send item result: %s', ok)
+            logging.info('Sending this item: %s', result)
             if not ok:
                 logging.info('Error in ES item iterator. Result: %s', result)
             else:
