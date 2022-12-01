@@ -180,7 +180,7 @@ class ElasticSearchPipeline(object):
         iterator = helpers.streaming_bulk(self.es, self.items_buffer)
 
         index_ok = False
-        for ok, result in iterator
+        for ok, result in iterator:
             if not ok:
                 logging.info('Error in ES item iterator. Result: %s', result)
             else:
