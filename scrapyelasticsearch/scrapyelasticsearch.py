@@ -184,7 +184,7 @@ class ElasticSearchPipeline(object):
             for __, sendItem in self.items_buffer:
                 logging.info('I want to send this to ES8: %s', sendItem)
         except Exception as e:
-            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', e)
+            logging.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', e)
 
         try:
             for ok, result in sendItems:
