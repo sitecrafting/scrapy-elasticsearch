@@ -181,22 +181,26 @@ class ElasticSearchPipeline(object):
         # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
         try:
             sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
-            logging.info('I want to send these to ES8: %s', sendItems)
-        except BulkIndexError as error:
-            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', error)
+            for __, sendItem in self.items_buffer:
+                logging.info('I want to send this to ES8: %s', sendItem)
+        except Exception as e:
+            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', e)
 
         try:
             for ok, result in sendItems:
-                __, result = result.popitem()
-                logging.info('ok value: %s', ok)
-                logging.info('Send item result: %s', result)
-                logging.info('Sending result status: %s', result['status'])
-                logging.info('Sending result error: %s', result['index']['error'])
+
                 if not ok:
+                    __, result = result.popitem()
                     logging.info('Error in sendItems. Result: %s', result['index'])
                     logging.info('Error in sendItems. Result error: %s', result['index']['error'])
-        except BulkIndexError as error:
-            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR???: %s', error)
+                else:
+                    __, result = result.popitem()
+                    logging.info('ok, __, result: %s, %s, %s', ok, __, result)
+                    logging.info('Sending result status: %s', result['status'])
+                    logging.info('Sending result error: %s', result['index']['error'])
+                    
+        except Exception as e:
+            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR???: %s', e)
             
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
