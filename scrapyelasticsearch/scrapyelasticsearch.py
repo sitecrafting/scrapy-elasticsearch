@@ -176,17 +176,20 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
-        helpers.bulk(self.es, self.items_buffer)
+        logging.info('In SEND ITEMS')
 
-        # index_ok = False
-        # for ok, result in iterator:
-        #     logging.info('Send item result: %s', ok)
-        #     logging.info('Sending this item: %s', result)
-        #     if not ok:
-        #         logging.info('Error in ES item iterator. Result: %s', result)
-        #     else:
-        #         index_ok = True
+        # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
+        sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
+
+        logging.info('I want to send these to ES8: %s', sendItems)
+
+        for ok, result in iterator:
+            logging.info('Send item result: %s', ok)
+            logging.info('Sending this item: %s', result)
+            if not ok:
+                logging.info('Error in ES item iterator. Result: %s', result)
+            else:
+                # do nothing, all is well
 
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
