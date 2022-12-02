@@ -183,20 +183,19 @@ class ElasticSearchPipeline(object):
 
         logging.info('I want to send these to ES8: %s', sendItems)
 
-        for ok, result in sendItems:
-            __, result = result.popitem()
-            logging.info('ok value: %s', ok)
-            logging.info('Send item result: %s', result)
-            logging.info('Sending result status: %s', result['status'])
-            logging.info('Sending result error: %s', result['index']['error'])
-            if not ok:
-                logging.info('Error in sendItems. Result: %s', result['index'])
-                logging.info('Error in sendItems. Result error: %s', result['index']['error'])
-            else:
-                logging.info('Apparently it worked out?')
-                its_working = True
-                # do nothing, all is well
-
+        try:
+            for ok, result in sendItems:
+                __, result = result.popitem()
+                logging.info('ok value: %s', ok)
+                logging.info('Send item result: %s', result)
+                logging.info('Sending result status: %s', result['status'])
+                logging.info('Sending result error: %s', result['index']['error'])
+                if not ok:
+                    logging.info('Error in sendItems. Result: %s', result['index'])
+                    logging.info('Error in sendItems. Result error: %s', result['index']['error'])
+        except BulkIndexError as error:
+            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR???: %s', error)
+            
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
             for each in item:
