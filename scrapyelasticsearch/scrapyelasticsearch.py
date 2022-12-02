@@ -178,11 +178,12 @@ class ElasticSearchPipeline(object):
     def send_items(self):
         logging.info('In SEND ITEMS')
 
+        for sendItem in self.items_buffer:
+            logging.info('I want to send this to ES8: %s', sendItem)
+
         # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
         try:
             sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
-            for __, sendItem in self.items_buffer:
-                logging.info('I want to send this to ES8: %s', sendItem)
         except Exception as e:
             logging.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', e)
 
