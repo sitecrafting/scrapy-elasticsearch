@@ -179,9 +179,11 @@ class ElasticSearchPipeline(object):
         logging.info('In SEND ITEMS')
 
         # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
-        sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
-
-        logging.info('I want to send these to ES8: %s', sendItems)
+        try:
+            sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
+            logging.info('I want to send these to ES8: %s', sendItems)
+        except BulkIndexError as error:
+            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', error)
 
         try:
             for ok, result in sendItems:
