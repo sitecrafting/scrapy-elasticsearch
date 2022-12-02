@@ -176,32 +176,21 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        logging.info('In SEND ITEMS')
 
-        for sendItem in self.items_buffer:
-            logging.info('I want to send this to ES8: %s', sendItem)
+        # for sendItem in self.items_buffer:
+        #     logging.info('I want to send this to ES8: %s', sendItem)
 
-        # logging.info('BULK SEND THESE ITEMS TO ES: %s', self.items_buffer)
-        try:
-            sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
-        except Exception as e:
-            logging.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 111 ???: %s', e)
+        sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
 
         try:
             for ok, result in sendItems:
 
                 if not ok:
                     __, result = result.popitem()
-                    logging.info('Error in sendItems. Result: %s', result['index'])
-                    logging.info('Error in sendItems. Result error: %s', result['index']['error'])
-                else:
-                    __, result = result.popitem()
-                    logging.info('ok, __, result: %s, %s, %s', ok, __, result)
-                    logging.info('Sending result status: %s', result['status'])
-                    logging.info('Sending result error: %s', result['index']['error'])
+                    logging.info('There was an issue sending item to Elasticsearch: (%s) %s', __, result)
                     
         except Exception as e:
-            logging.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 222 ???: %s', e)
+            logging.info('Error iterating through streaming_bulk result: %s', e)
             
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
