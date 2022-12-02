@@ -201,7 +201,7 @@ class ElasticSearchPipeline(object):
                     logging.info('Sending result error: %s', result['index']['error'])
                     
         except Exception as e:
-            logger.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR???: %s', e)
+            logging.info('ARE THESE THE DROIDS WEVE BEEN LOOKING FOR 222 ???: %s', e)
             
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
