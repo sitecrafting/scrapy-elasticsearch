@@ -189,6 +189,7 @@ class ElasticSearchPipeline(object):
             if not ok:
                 logging.info('Error in ES item iterator. Result: %s', result)
             else:
+                its_working = True
                 # do nothing, all is well
 
     def process_item(self, item, spider):
