@@ -92,7 +92,7 @@ class ElasticSearchPipeline(object):
 
         es_settings = dict()
         es_settings['hosts'] = es_servers
-        es_settings['timeout'] = es_timeout
+        es_settings['request_timeout'] = es_timeout
 
         if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
             es_settings['http_auth'] = (crawler_settings['ELASTICSEARCH_USERNAME'], crawler_settings['ELASTICSEARCH_PASSWORD'])
