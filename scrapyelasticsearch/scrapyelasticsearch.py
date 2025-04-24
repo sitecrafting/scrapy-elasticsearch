@@ -49,12 +49,14 @@ class ElasticSearchPipeline(object):
 
     @staticmethod
     def _get_version(es):
+        logging.info('Checking Elasticsearch version...')
         info = es.info()
         vers = info['version']['number']
         match = re.match('(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)', vers)
         major_num = int(match['major'])
         minor_num = int(match['minor'])
         patch_num = int(match['patch'])
+        logging.info('Elasticsearch version is: %s.%s.%s' % (major_num, minor_num, patch_num))
         return _VersionInfo(major_num, minor_num, patch_num, vers)
 
     @classmethod
@@ -66,6 +68,7 @@ class ElasticSearchPipeline(object):
                 raise InvalidSettingsException('%s is not defined in settings.py when server version is %s'
                                                % (setting_key, version.full))
 
+        logging.info('In validate_vers_spec_settings()')
         vers = cls._get_version(es)
 
         # Require only if version is less than 6.2.d.
@@ -105,6 +108,7 @@ class ElasticSearchPipeline(object):
             es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
             es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
             
+        logging.info('Setting Elasticsearch headers...')
         es_settings['headers'] = {
             "Content-Type": "application/json",
             "Accept": "application/json"
