@@ -104,7 +104,11 @@ class ElasticSearchPipeline(object):
             es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT'] or certifi.where()
             es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
             es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
-
+            
+        es_settings['headers'] = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
         es = Elasticsearch(**es_settings)
         return es
 
@@ -158,7 +162,7 @@ class ElasticSearchPipeline(object):
             '_source': dict(item)
         }
 
-        # The ES roadmap migrates to a typeless API with ES 7 and later.
+        # The ES roadmap migrates to a typeless API with ES 7 and later
         if 'ELASTICSEARCH_TYPE' in self.settings:
             index_action['_type'] = self.settings['ELASTICSEARCH_TYPE']
 
@@ -167,6 +171,8 @@ class ElasticSearchPipeline(object):
             index_action['_id'] = item_id
             logging.debug('Generated unique key %s' % item_id)
 
+        # logging.info('SEND THIS ITEM TO ES: %s', index_action)
+
         self.items_buffer.append(index_action)
 
         if len(self.items_buffer) >= self.settings.get('ELASTICSEARCH_BUFFER_LENGTH', 500):
@@ -174,9 +180,22 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-        # bulk send
-        helpers.bulk(self.es, self.items_buffer)
 
+        # for sendItem in self.items_buffer:
+        #     logging.info('I want to send this to ES8: %s', sendItem)
+
+        sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
+
+        try:
+            for ok, result in sendItems:
+
+                if not ok:
+                    __, result = result.popitem()
+                    logging.info('There was an issue sending item to Elasticsearch: (%s) %s', __, result)
+                    
+        except Exception as e:
+            logging.info('Error iterating through streaming_bulk result: %s', e)
+            
     def process_item(self, item, spider):
         if isinstance(item, types.GeneratorType) or isinstance(item, list):
             for each in item:
