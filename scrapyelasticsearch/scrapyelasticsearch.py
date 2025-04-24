@@ -104,7 +104,11 @@ class ElasticSearchPipeline(object):
             es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT'] or certifi.where()
             es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
             es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
-
+            
+        es_settings['headers'] = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
         es = Elasticsearch(**es_settings)
         return es
 
