@@ -50,8 +50,8 @@ class ElasticSearchPipeline(object):
     @staticmethod
     def _get_version(es):
         logging.debug('Checking Elasticsearch version...')
-        info = es.info()
-        # info = es.transport.perform_request("GET", "/")
+        # info = es.info()
+        info = es.transport.perform_request("GET", "/")
         vers = info['version']['number']
         match = re.match('(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)', vers)
         major_num = int(match['major'])
