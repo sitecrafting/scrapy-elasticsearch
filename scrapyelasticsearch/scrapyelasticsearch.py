@@ -143,7 +143,7 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client A')
@@ -155,7 +155,7 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client B')
@@ -167,7 +167,7 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client C')
@@ -179,7 +179,7 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client D')
@@ -191,7 +191,7 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client E')
@@ -203,7 +203,7 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client F')
@@ -215,7 +215,7 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client G')
@@ -227,7 +227,7 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
-            info = es.info()
+            info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client H')
