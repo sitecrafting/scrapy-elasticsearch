@@ -49,16 +49,16 @@ class ElasticSearchPipeline(object):
 
     @staticmethod
     def _get_version(es):
-        logging.debug('Checking Elasticsearch version...')
+        logging.info('Checking Elasticsearch version...')
         # Perform raw request and unpack status, body
         info = es.transport.perform_request("GET", "/")
-        logging.debug('%s', info)
+        logging.info('%s', info)
         vers = info['version']['number']
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)', vers)
         major_num = int(match['major'])
         minor_num = int(match['minor'])
         patch_num = int(match['patch'])
-        logging.debug('Elasticsearch version is: %s.%s.%s' % (major_num, minor_num, patch_num))
+        logging.info('Elasticsearch version is: %s.%s.%s' % (major_num, minor_num, patch_num))
         return _VersionInfo(major_num, minor_num, patch_num, vers)
     
 
