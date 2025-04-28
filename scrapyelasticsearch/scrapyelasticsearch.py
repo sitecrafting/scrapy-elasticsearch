@@ -84,6 +84,8 @@ class ElasticSearchPipeline(object):
         auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
 
+        es_cloud_id = crawler_settings.get('ELASTICSEARCH_CLOUD_ID')
+        es_scheme = crawler_settings.get('ELASTICSEARCH_SCHEME', 'https')
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
@@ -98,7 +100,8 @@ class ElasticSearchPipeline(object):
             return es
 
         es_settings = dict()
-        es_settings['hosts'] = es_servers
+        es_settings['cloud_id'] = es_cloud_id
+        # es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
 
         logging.info('crawler_settings: %s', crawler_settings)
