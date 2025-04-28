@@ -118,8 +118,8 @@ class ElasticSearchPipeline(object):
             es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
             
         logging.info('Setting Elasticsearch settings: %s', es_settings)
-        es_settings['headers']['Content-Type'] = "application/json"
-        es_settings['headers']['Accept'] = "application/json"
+        # es_settings['headers']['Content-Type'] = "application/json"
+        # es_settings['headers']['Accept'] = "application/json"
         es = Elasticsearch(**es_settings)
         return es
 
