@@ -85,6 +85,7 @@ class ElasticSearchPipeline(object):
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
 
         es_cloud_id = crawler_settings.get('ELASTICSEARCH_CLOUD_ID')
+        es_api_key = crawler_settings.get('ELASTICSEARCH_API_KEY')
         es_scheme = crawler_settings.get('ELASTICSEARCH_SCHEME', 'https')
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
@@ -101,24 +102,25 @@ class ElasticSearchPipeline(object):
 
         es_settings = dict()
         es_settings['cloud_id'] = es_cloud_id
+        es_settings['api_key'] = es_api_key
         # es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
 
         logging.info('crawler_settings: %s', crawler_settings)
 
-        if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
-            es_settings['basic_auth'] = (
-                crawler_settings['ELASTICSEARCH_USERNAME'], 
-                crawler_settings['ELASTICSEARCH_PASSWORD']
-            )
+        # if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
+        #     es_settings['basic_auth'] = (
+        #         crawler_settings['ELASTICSEARCH_USERNAME'], 
+        #         crawler_settings['ELASTICSEARCH_PASSWORD']
+        #     )
 
-        if 'ELASTICSEARCH_CA' in crawler_settings:
-            import certifi
-            es_settings['port'] = 443
-            es_settings['use_ssl'] = True
-            es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT'] or certifi.where()
-            es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
-            es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
+        # if 'ELASTICSEARCH_CA' in crawler_settings:
+        #     import certifi
+        #     es_settings['port'] = 443
+        #     es_settings['use_ssl'] = True
+        #     es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT'] or certifi.where()
+        #     es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
+        #     es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
             
         logging.info('Setting Elasticsearch settings: %s', es_settings)
         # es_settings['headers']['Content-Type'] = "application/json"
