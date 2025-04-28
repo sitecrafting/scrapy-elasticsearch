@@ -86,7 +86,10 @@ class ElasticSearchPipeline(object):
 
         es_cloud_id = crawler_settings.get('ELASTICSEARCH_CLOUD_ID')
         es_api_key = crawler_settings.get('ELASTICSEARCH_API_KEY')
-        es_scheme = crawler_settings.get('ELASTICSEARCH_SCHEME', 'https')
+        es_url = crawler_settings.get('ELASTICSEARCH_URL')
+        es_url_scheme = crawler_settings.get('ELASTICSEARCH_URL_SCHEME', 'https')
+        es_username = crawler_settings.get('ELASTICSEARCH_USERNAME')
+        es_password = crawler_settings.get('ELASTICSEARCH_PASSWORD')
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_servers = es_servers if isinstance(es_servers, list) else [es_servers]
 
@@ -106,7 +109,7 @@ class ElasticSearchPipeline(object):
         # es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
 
-        logging.info('crawler_settings: %s', crawler_settings)
+        # logging.info('crawler_settings: %s', crawler_settings)
 
         # if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
         #     es_settings['basic_auth'] = (
@@ -122,10 +125,53 @@ class ElasticSearchPipeline(object):
         #     es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
         #     es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
             
-        logging.info('Setting Elasticsearch settings: %s', es_settings)
+        # logging.info('elasticsearch-py version: %s', elasticsearch.__version__)
+        # logging.info('elastic-transport version: %s', elastic_transport.__version__)
+        logging.info('es_cloud_id: %s', es_cloud_id)
+        logging.info('es_servers: %s', es_servers)
+        logging.info('es_api_key: %s', es_api_key)
+        logging.info('es_timeout: %s', es_timeout)
+        logging.info('es_username: %s', es_username)
+        logging.info('es_password: %s', es_password)
+
         # es_settings['headers']['Content-Type'] = "application/json"
         # es_settings['headers']['Accept'] = "application/json"
-        es = Elasticsearch(**es_settings)
+        try:
+            es = Elasticsearch(
+                cloud_id=es_cloud_id,
+                api_key=es_api_key,
+                request_timeout=es_timeout
+            )
+        except Exception as e:
+            logging.error('Error creating Elasticsearch client A')
+
+        try:
+            es = Elasticsearch(
+                cloud_id=es_cloud_id,
+                basic_auth=(es_username, es_password),
+                request_timeout=es_timeout
+            )
+        except Exception as e:
+            logging.error('Error creating Elasticsearch client B')
+        
+        try:
+            es = Elasticsearch(
+                es_servers,
+                api_key=es_api_key,
+                request_timeout=es_timeout
+            )
+        except Exception as e:
+            logging.error('Error creating Elasticsearch client C')
+        
+        try:
+            es = Elasticsearch(
+                es_servers,
+                basic_auth=(es_username, es_password),
+                request_timeout=es_timeout
+            )
+        except Exception as e:
+            logging.error('Error creating Elasticsearch client D')
+        
         return es
 
     @classmethod
