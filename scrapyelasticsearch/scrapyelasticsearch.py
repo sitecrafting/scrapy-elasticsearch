@@ -101,6 +101,8 @@ class ElasticSearchPipeline(object):
         es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
 
+        logging.info('crawler_settings: %s', crawler_settings)
+
         if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
             es_settings['basic_auth'] = (
                 crawler_settings['ELASTICSEARCH_USERNAME'], 
@@ -115,10 +117,10 @@ class ElasticSearchPipeline(object):
             es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
             es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
             
-        logging.debug('Setting Elasticsearch headers...')
+        logging.info('Setting Elasticsearch settings: %s', es_settings)
         es_settings['headers'] = {
-            "Content-Type": "application/vnd.elasticsearch+json;compatible-with=8",
-            "Accept": "application/vnd.elasticsearch+json;compatible-with=8"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         }
         es = Elasticsearch(**es_settings)
         return es
