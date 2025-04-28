@@ -152,7 +152,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                basic_auth=(es_username, es_password),
+                http_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
             info = es.transport.perform_request("GET", "/")
@@ -176,7 +176,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client D')
             es = Elasticsearch(
                 es_servers,
-                basic_auth=(es_username, es_password),
+                http_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
             info = es.transport.perform_request("GET", "/")
@@ -200,7 +200,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client F')
             es = Elasticsearch(
                 es_hosts,
-                basic_auth=(es_username, es_password),
+                http_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
             info = es.transport.perform_request("GET", "/")
@@ -224,7 +224,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client H')
             es = Elasticsearch(
                 hosts=es_hosts,
-                basic_auth=(es_username, es_password),
+                http_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
             info = es.transport.perform_request("GET", "/")
