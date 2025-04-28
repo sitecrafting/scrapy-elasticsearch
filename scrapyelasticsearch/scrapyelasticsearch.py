@@ -143,8 +143,10 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client A')
+            logging.info('Error creating Elasticsearch client A')
 
         try:
             logging.info('Create Elasticsearch client B')
@@ -153,8 +155,10 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client B')
+            logging.info('Error creating Elasticsearch client B')
         
         try:
             logging.info('Create Elasticsearch client C')
@@ -163,8 +167,10 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client C')
+            logging.info('Error creating Elasticsearch client C')
         
         try:
             logging.info('Create Elasticsearch client D')
@@ -173,8 +179,10 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client D')
+            logging.info('Error creating Elasticsearch client D')
         
         try:
             logging.info('Create Elasticsearch client E')
@@ -183,8 +191,10 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client E')
+            logging.info('Error creating Elasticsearch client E')
         
         try:
             logging.info('Create Elasticsearch client F')
@@ -193,8 +203,10 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client F')
+            logging.info('Error creating Elasticsearch client F')
         
         try:
             logging.info('Create Elasticsearch client G')
@@ -203,8 +215,10 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client G')
+            logging.info('Error creating Elasticsearch client G')
         
         try:
             logging.info('Create Elasticsearch client H')
@@ -213,8 +227,10 @@ class ElasticSearchPipeline(object):
                 basic_auth=(es_username, es_password),
                 request_timeout=es_timeout
             )
+            info = es.info()
+            logging.info('%s', info)
         except Exception as e:
-            logging.error('Error creating Elasticsearch client H')
+            logging.info('Error creating Elasticsearch client H')
         
         return es
 
