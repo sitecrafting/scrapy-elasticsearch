@@ -149,6 +149,9 @@ class ElasticSearchPipeline(object):
         api_key_decoded = base64.b64decode(es_api_key).decode('utf-8')
         api_key_tuple = tuple(api_key_decoded.split(':'))
 
+        logging.info('api_key_decoded: %s', api_key_decoded)
+        logging.info('api_key_tuple: %s', api_key_tuple)
+
         try:
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
