@@ -191,7 +191,7 @@ class ElasticSearchPipeline(object):
         try:
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
-                es_servers,
+                hosts=es_hosts,
                 headers={
                     "Authorization": f"ApiKey {es_api_key}"
                 },
