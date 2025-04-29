@@ -20,10 +20,14 @@ from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
 from six import string_types
 
+import elasticsearch
+import elastic_transport
+import requests
 import logging
 import hashlib
 import types
 import re
+import os
 from collections import namedtuple
 
 class InvalidSettingsException(Exception):
@@ -81,6 +85,10 @@ class ElasticSearchPipeline(object):
 
     @classmethod
     def init_es_client(cls, crawler_settings):
+
+        logging.basicConfig(level=logging.DEBUG)
+        logging.getLogger('elastic_transport').setLevel(logging.DEBUG)
+
         auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
 
@@ -93,6 +101,10 @@ class ElasticSearchPipeline(object):
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_hosts = es_servers if isinstance(es_servers, list) else [es_servers]
 
+        test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey {es_api_key}'}, verify=True)
+        logging.info('TEST reponse status code:', test_response.status_code)
+        logging.info('TEST response body:', test_response.text)
+
         if auth_type == 'NTLM':
             from .transportNTLM import TransportNTLM
             es = Elasticsearch(hosts=es_hosts,
@@ -100,7 +112,6 @@ class ElasticSearchPipeline(object):
                                ntlm_user= crawler_settings['ELASTICSEARCH_USERNAME'],
                                ntlm_pass= crawler_settings['ELASTICSEARCH_PASSWORD'],
                                timeout=es_timeout)
-
             return es
 
         es_settings = dict()
@@ -134,6 +145,12 @@ class ElasticSearchPipeline(object):
         logging.info('es_username: %s', es_username)
         logging.info('es_password: %s', es_password)
 
+        logging.info('elasticsearch-py version: %s', elasticsearch.__version__)
+        logging.info('elastic-transport version: %s', elastic_transport.__version__)
+        logging.info('HTTP_PROXY: %s', os.environ.get('HTTP_PROXY'))
+        logging.info('HTTPS_PROXY: %s', os.environ.get('HTTPS_PROXY'))
+        logging.info('NO_PROXY: %s', os.environ.get('NO_PROXY'))
+
         # es_settings['headers']['Content-Type'] = "application/json"
         # es_settings['headers']['Accept'] = "application/json"
         try:
@@ -141,7 +158,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
                 api_key=es_api_key,
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -153,7 +172,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
                 http_auth=(es_username, es_password),
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -165,7 +186,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 es_servers,
                 api_key=es_api_key,
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -177,7 +200,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 es_servers,
                 http_auth=(es_username, es_password),
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -189,7 +214,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 es_hosts,
                 api_key=es_api_key,
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -201,7 +228,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 es_hosts,
                 http_auth=(es_username, es_password),
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -213,7 +242,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 hosts=es_hosts,
                 api_key=es_api_key,
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -225,7 +256,9 @@ class ElasticSearchPipeline(object):
             es = Elasticsearch(
                 hosts=es_hosts,
                 http_auth=(es_username, es_password),
-                request_timeout=es_timeout
+                request_timeout=es_timeout,
+                verify_certs=True,
+                ssl_show_warn=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
