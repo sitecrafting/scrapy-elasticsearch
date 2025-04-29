@@ -20,6 +20,7 @@ from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
 from six import string_types
 
+import base64
 import elasticsearch
 import elastic_transport
 import requests
