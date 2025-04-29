@@ -99,7 +99,7 @@ class ElasticSearchPipeline(object):
         logging.getLogger('elastic_transport').setLevel(logging.ERROR)
 
         import http.client
-        
+
         # Save real HTTPConnection.request
         _real_http_request = http.client.HTTPConnection.request
 
@@ -177,7 +177,9 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                api_key=api_key_tuple,
+                headers={
+                    "Authorization": f"ApiKey {es_api_key}"
+                },
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -189,8 +191,10 @@ class ElasticSearchPipeline(object):
         try:
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
-                cloud_id=es_cloud_id,
-                api_key=es_api_key,
+                es_servers,
+                headers={
+                    "Authorization": f"ApiKey {es_api_key}"
+                },
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -198,19 +202,6 @@ class ElasticSearchPipeline(object):
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client B')
-        
-        try:
-            logging.info('Create Elasticsearch client C')
-            es = Elasticsearch(
-                es_servers,
-                api_key=es_api_key,
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client C')
         
         return es
 
