@@ -18,6 +18,7 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
+from elastic_transport import Transport
 from six import string_types
 
 import base64
@@ -85,10 +86,28 @@ class ElasticSearchPipeline(object):
             require_setting('ELASTICSEARCH_TYPE', vers)
 
     @classmethod
+    def patched_perform_request(self, method, url, headers=None, **kwargs):
+        print(f"[Elastic Request] {method} {url}")
+        if headers:
+            print(f"[Elastic Headers] {headers}")
+        return _real_perform_request(self, method, url, headers=headers, **kwargs)
+
+    @classmethod
     def init_es_client(cls, crawler_settings):
 
-        logging.basicConfig(level=logging.DEBUG)
-        logging.getLogger('elastic_transport').setLevel(logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
+        logging.getLogger('elastic_transport').setLevel(logging.INFO)
+
+        # Define the patch
+        def patched_perform_request(self, method, url, headers=None, **kwargs):
+            logging.info(f"[Elastic Request] {method} {url}")
+            if headers:
+                logging.info(f"[Elastic Headers] {headers}")
+            return _real_perform_request(self, method, url, headers=headers, **kwargs)
+
+        # Patch perform_request
+        _real_perform_request = Transport.perform_request
+        Transport.perform_request = patched_perform_request
 
         auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
