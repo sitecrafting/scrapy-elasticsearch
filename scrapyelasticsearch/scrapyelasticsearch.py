@@ -138,29 +138,20 @@ class ElasticSearchPipeline(object):
             
         # logging.info('elasticsearch-py version: %s', elasticsearch.__version__)
         # logging.info('elastic-transport version: %s', elastic_transport.__version__)
-        logging.info('es_cloud_id: %s', es_cloud_id)
-        logging.info('es_servers: %s', es_servers)
-        logging.info('es_api_key: %s', es_api_key)
-        logging.info('es_timeout: %s', es_timeout)
-        logging.info('es_username: %s', es_username)
-        logging.info('es_password: %s', es_password)
+        # logging.info('es_cloud_id: %s', es_cloud_id)
+        # logging.info('es_servers: %s', es_servers)
+        # logging.info('es_api_key: %s', es_api_key)
+        # logging.info('es_timeout: %s', es_timeout)
+        # logging.info('es_username: %s', es_username)
+        # logging.info('es_password: %s', es_password)
 
-        logging.info('elasticsearch-py version: %s', elasticsearch.__version__)
-        logging.info('elastic-transport version: %s', elastic_transport.__version__)
-        logging.info('HTTP_PROXY: %s', os.environ.get('HTTP_PROXY'))
-        logging.info('HTTPS_PROXY: %s', os.environ.get('HTTPS_PROXY'))
-        logging.info('NO_PROXY: %s', os.environ.get('NO_PROXY'))
-
-        # es_settings['headers']['Content-Type'] = "application/json"
-        # es_settings['headers']['Accept'] = "application/json"
         try:
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
                 api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -171,10 +162,9 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                http_auth=(es_username, es_password),
+                basic_auth=(es_username, es_password),
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -187,8 +177,7 @@ class ElasticSearchPipeline(object):
                 es_servers,
                 api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -199,10 +188,9 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client D')
             es = Elasticsearch(
                 es_servers,
-                http_auth=(es_username, es_password),
+                basic_auth=(es_username, es_password),
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -215,8 +203,7 @@ class ElasticSearchPipeline(object):
                 es_hosts,
                 api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -227,10 +214,9 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client F')
             es = Elasticsearch(
                 es_hosts,
-                http_auth=(es_username, es_password),
+                basic_auth=(es_username, es_password),
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -243,8 +229,7 @@ class ElasticSearchPipeline(object):
                 hosts=es_hosts,
                 api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
@@ -255,10 +240,9 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client H')
             es = Elasticsearch(
                 hosts=es_hosts,
-                http_auth=(es_username, es_password),
+                basic_auth=(es_username, es_password),
                 request_timeout=es_timeout,
-                verify_certs=True,
-                ssl_show_warn=True
+                verify_certs=True
             )
             info = es.transport.perform_request("GET", "/")
             logging.info('%s', info)
