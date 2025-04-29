@@ -145,11 +145,14 @@ class ElasticSearchPipeline(object):
         # logging.info('es_username: %s', es_username)
         # logging.info('es_password: %s', es_password)
 
+        api_key_decoded = base64.b64decode(es_api_key).decode('utf-8')
+        api_key_tuple = tuple(api_key_decoded.split(':'))
+
         try:
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                api_key=es_api_key,
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -175,7 +178,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client C')
             es = Elasticsearch(
                 es_servers,
-                api_key=es_api_key,
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -201,7 +204,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client E')
             es = Elasticsearch(
                 es_hosts,
-                api_key=es_api_key,
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -227,7 +230,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client G')
             es = Elasticsearch(
                 hosts=es_hosts,
-                api_key=es_api_key,
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
