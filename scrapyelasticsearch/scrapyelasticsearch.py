@@ -95,19 +95,21 @@ class ElasticSearchPipeline(object):
     @classmethod
     def init_es_client(cls, crawler_settings):
 
-        logging.basicConfig(level=logging.INFO)
-        logging.getLogger('elastic_transport').setLevel(logging.INFO)
+        logging.basicConfig(level=logging.ERROR)
+        logging.getLogger('elastic_transport').setLevel(logging.ERROR)
 
-        # Define the patch
-        def patched_perform_request(self, method, url, headers=None, **kwargs):
-            logging.info(f"[Elastic Request] {method} {url}")
-            if headers:
-                logging.info(f"[Elastic Headers] {headers}")
-            return _real_perform_request(self, method, url, headers=headers, **kwargs)
+        import http.client
+        
+        # Save real HTTPConnection.request
+        _real_http_request = http.client.HTTPConnection.request
 
-        # Patch perform_request
-        _real_perform_request = Transport.perform_request
-        Transport.perform_request = patched_perform_request
+        def patched_http_request(self, method, url, body=None, headers={}, *args, **kwargs):
+            print(f"[HTTP Request] {method} {url}")
+            print(f"[HTTP Headers] {headers}")
+            return _real_http_request(self, method, url, body, headers, *args, **kwargs)
+
+        # Patch it
+        http.client.HTTPConnection.request = patched_http_request
 
         auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
@@ -168,8 +170,8 @@ class ElasticSearchPipeline(object):
         api_key_decoded = base64.b64decode(es_api_key).decode('utf-8')
         api_key_tuple = tuple(api_key_decoded.split(':'))
 
-        logging.info('api_key_decoded: %s', api_key_decoded)
-        logging.info('api_key_tuple: %s', api_key_tuple)
+        # logging.info('api_key_decoded: %s', api_key_decoded)
+        # logging.info('api_key_tuple: %s', api_key_tuple)
 
         try:
             logging.info('Create Elasticsearch client A')
@@ -196,6 +198,19 @@ class ElasticSearchPipeline(object):
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client B')
+        
+        try:
+            logging.info('Create Elasticsearch client C')
+            es = Elasticsearch(
+                es_servers,
+                api_key=es_api_key,
+                request_timeout=es_timeout,
+                verify_certs=True
+            )
+            info = es.transport.perform_request("GET", "/")
+            logging.info('%s', info)
+        except Exception as e:
+            logging.info('Error creating Elasticsearch client C')
         
         return es
 
