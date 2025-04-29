@@ -169,7 +169,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                basic_auth=(es_username, es_password),
+                api_key=es_api_key,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -177,84 +177,6 @@ class ElasticSearchPipeline(object):
             logging.info('%s', info)
         except Exception as e:
             logging.info('Error creating Elasticsearch client B')
-        
-        try:
-            logging.info('Create Elasticsearch client C')
-            es = Elasticsearch(
-                es_servers,
-                api_key=api_key_tuple,
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client C')
-        
-        try:
-            logging.info('Create Elasticsearch client D')
-            es = Elasticsearch(
-                es_servers,
-                basic_auth=(es_username, es_password),
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client D')
-        
-        try:
-            logging.info('Create Elasticsearch client E')
-            es = Elasticsearch(
-                es_hosts,
-                api_key=api_key_tuple,
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client E')
-        
-        try:
-            logging.info('Create Elasticsearch client F')
-            es = Elasticsearch(
-                es_hosts,
-                basic_auth=(es_username, es_password),
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client F')
-        
-        try:
-            logging.info('Create Elasticsearch client G')
-            es = Elasticsearch(
-                hosts=es_hosts,
-                api_key=api_key_tuple,
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client G')
-        
-        try:
-            logging.info('Create Elasticsearch client H')
-            es = Elasticsearch(
-                hosts=es_hosts,
-                basic_auth=(es_username, es_password),
-                request_timeout=es_timeout,
-                verify_certs=True
-            )
-            info = es.transport.perform_request("GET", "/")
-            logging.info('%s', info)
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client H')
         
         return es
 
