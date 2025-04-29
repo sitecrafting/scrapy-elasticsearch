@@ -101,7 +101,7 @@ class ElasticSearchPipeline(object):
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_hosts = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey {es_api_key}'}, verify=True)
+        test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey ' + es_api_key}, verify=True)
         logging.info('TEST reponse status code:', test_response.status_code)
         logging.info('TEST response body:', test_response.text)
 
