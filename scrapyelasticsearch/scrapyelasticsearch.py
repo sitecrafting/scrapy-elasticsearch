@@ -139,7 +139,7 @@ class ElasticSearchPipeline(object):
         es_settings = dict()
         es_settings['cloud_id'] = es_cloud_id
         es_settings['api_key'] = es_api_key
-        # es_settings['hosts'] = es_servers
+        es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
 
         # logging.info('crawler_settings: %s', crawler_settings)
@@ -177,9 +177,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                headers={
-                    "Authorization": f"ApiKey {es_api_key}"
-                },
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True
             )
@@ -192,9 +190,7 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
                 hosts=es_hosts,
-                headers={
-                    "Authorization": f"ApiKey {es_api_key}"
-                },
+                basic_auth=(es_username, es_password),
                 request_timeout=es_timeout,
                 verify_certs=True
             )
