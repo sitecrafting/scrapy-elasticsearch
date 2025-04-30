@@ -127,14 +127,14 @@ class ElasticSearchPipeline(object):
         logging.info('TEST reponse status code:', test_response.status_code)
         logging.info('TEST response body:', test_response.text)
 
-        if auth_type == 'NTLM':
-            from .transportNTLM import TransportNTLM
-            es = Elasticsearch(hosts=es_hosts,
-                               transport_class=TransportNTLM,
-                               ntlm_user= crawler_settings['ELASTICSEARCH_USERNAME'],
-                               ntlm_pass= crawler_settings['ELASTICSEARCH_PASSWORD'],
-                               timeout=es_timeout)
-            return es
+        # if auth_type == 'NTLM':
+        #     from .transportNTLM import TransportNTLM
+        #     es = Elasticsearch(hosts=es_hosts,
+        #                        transport_class=TransportNTLM,
+        #                        ntlm_user= crawler_settings['ELASTICSEARCH_USERNAME'],
+        #                        ntlm_pass= crawler_settings['ELASTICSEARCH_PASSWORD'],
+        #                        timeout=es_timeout)
+        #     return es
 
         es_settings = dict()
         es_settings['cloud_id'] = es_cloud_id
