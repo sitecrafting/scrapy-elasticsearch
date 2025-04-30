@@ -178,8 +178,6 @@ class ElasticSearchPipeline(object):
                 cloud_id=es_cloud_id,
                 api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True,
-                compatibility_mode=True,
                 headers = {
                     "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
                     "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
@@ -192,25 +190,23 @@ class ElasticSearchPipeline(object):
         except Exception as e:
             logging.info('Error creating Elasticsearch client A')
 
-        try:
-            logging.info('Create Elasticsearch client B')
-            es = Elasticsearch(
-                cloud_id=es_cloud_id,
-                api_key=api_key_tuple,
-                request_timeout=es_timeout,
-                verify_certs=True,
-                compatibility_mode=True,
-                headers = {
-                    "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
-                    "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
-                }
-            )
-            
-            info = es.info()
-            logging.info('%s', info)
+        # try:
+        logging.info('Create Elasticsearch client B')
+        es = Elasticsearch(
+            cloud_id=es_cloud_id,
+            api_key=api_key_tuple,
+            request_timeout=es_timeout,
+            headers = {
+                "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
+            }
+        )
+        
+        info = es.info()
+        logging.info('%s', info)
 
-        except Exception as e:
-            logging.info('Error creating Elasticsearch client B')
+        # except Exception as e:
+        #     logging.info('Error creating Elasticsearch client B')
 
         return es
 
