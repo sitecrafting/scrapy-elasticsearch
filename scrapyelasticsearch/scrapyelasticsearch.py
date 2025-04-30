@@ -123,9 +123,10 @@ class ElasticSearchPipeline(object):
         es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
         es_hosts = es_servers if isinstance(es_servers, list) else [es_servers]
 
-        test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey ' + es_api_key}, verify=True)
-        logging.info('TEST reponse status code:', test_response.status_code)
-        logging.info('TEST response body:', test_response.text)
+        # THIS TEST SUCCEEDS
+        # test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey ' + es_api_key}, verify=True)
+        # logging.info('TEST reponse status code:', test_response.status_code)
+        # logging.info('TEST response body:', test_response.text)
 
         # if auth_type == 'NTLM':
         #     from .transportNTLM import TransportNTLM
@@ -141,8 +142,6 @@ class ElasticSearchPipeline(object):
         es_settings['api_key'] = es_api_key
         es_settings['hosts'] = es_servers
         es_settings['request_timeout'] = es_timeout
-
-        # logging.info('crawler_settings: %s', crawler_settings)
 
         # if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
         #     es_settings['basic_auth'] = (
@@ -177,28 +176,34 @@ class ElasticSearchPipeline(object):
             logging.info('Create Elasticsearch client A')
             es = Elasticsearch(
                 cloud_id=es_cloud_id,
-                api_key=api_key_tuple,
+                api_key=es_api_key,
                 request_timeout=es_timeout,
-                verify_certs=True
+                verify_certs=True,
+                compatibility_mode=True
             )
-            info = es.transport.perform_request("GET", "/")
+            
+            info = es.info()
             logging.info('%s', info)
+
         except Exception as e:
             logging.info('Error creating Elasticsearch client A')
 
         try:
             logging.info('Create Elasticsearch client B')
             es = Elasticsearch(
-                hosts=es_hosts,
-                basic_auth=(es_username, es_password),
+                cloud_id=es_cloud_id,
+                api_key=api_key_tuple,
                 request_timeout=es_timeout,
-                verify_certs=True
+                verify_certs=True,
+                compatibility_mode=True
             )
-            info = es.transport.perform_request("GET", "/")
+            
+            info = es.info()
             logging.info('%s', info)
+
         except Exception as e:
             logging.info('Error creating Elasticsearch client B')
-        
+
         return es
 
     @classmethod
