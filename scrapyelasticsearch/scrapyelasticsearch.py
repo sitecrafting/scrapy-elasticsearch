@@ -179,7 +179,11 @@ class ElasticSearchPipeline(object):
                 api_key=es_api_key,
                 request_timeout=es_timeout,
                 verify_certs=True,
-                compatibility_mode=True
+                compatibility_mode=True,
+                headers = {
+                    "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                    "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
+                }
             )
             
             info = es.info()
@@ -195,7 +199,11 @@ class ElasticSearchPipeline(object):
                 api_key=api_key_tuple,
                 request_timeout=es_timeout,
                 verify_certs=True,
-                compatibility_mode=True
+                compatibility_mode=True,
+                headers = {
+                    "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                    "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
+                }
             )
             
             info = es.info()
