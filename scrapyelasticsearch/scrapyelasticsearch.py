@@ -18,13 +18,8 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
-from elastic_transport import Transport
 from six import string_types
 
-import base64
-import elasticsearch
-import elastic_transport
-import requests
 import logging
 import hashlib
 import types
@@ -66,8 +61,6 @@ class ElasticSearchPipeline(object):
         patch_num = int(match['patch'])
         logging.info('Elasticsearch version is: %s.%s.%s' % (major_num, minor_num, patch_num))
         return _VersionInfo(major_num, minor_num, patch_num, vers)
-    
-
 
     @classmethod
     def validate_vers_spec_settings(cls, settings, es):
@@ -86,79 +79,12 @@ class ElasticSearchPipeline(object):
             require_setting('ELASTICSEARCH_TYPE', vers)
 
     @classmethod
-    def patched_perform_request(self, method, url, headers=None, **kwargs):
-        print(f"[Elastic Request] {method} {url}")
-        if headers:
-            print(f"[Elastic Headers] {headers}")
-        return _real_perform_request(self, method, url, headers=headers, **kwargs)
-
-    @classmethod
     def init_es_client(cls, crawler_settings):
 
-        # logging.basicConfig(level=logging.ERROR)
-        # logging.getLogger('elastic_transport').setLevel(logging.ERROR)
-
-        auth_type = crawler_settings.get('ELASTICSEARCH_AUTH')
         es_timeout = crawler_settings.get('ELASTICSEARCH_TIMEOUT',60)
-
         es_cloud_id = crawler_settings.get('ELASTICSEARCH_CLOUD_ID')
         es_api_key = crawler_settings.get('ELASTICSEARCH_API_KEY')
-        # es_url = crawler_settings.get('ELASTICSEARCH_URL')
-        # es_url_scheme = crawler_settings.get('ELASTICSEARCH_URL_SCHEME', 'https')
-        # es_username = crawler_settings.get('ELASTICSEARCH_USERNAME')
-        # es_password = crawler_settings.get('ELASTICSEARCH_PASSWORD')
-        # es_servers = crawler_settings.get('ELASTICSEARCH_SERVERS', 'localhost:9200')
-        # es_hosts = es_servers if isinstance(es_servers, list) else [es_servers]
-
-        # THIS TEST SUCCEEDS
-        # test_response = requests.get(es_servers, headers={'Authorization': 'ApiKey ' + es_api_key}, verify=True)
-        # logging.info('TEST reponse status code:', test_response.status_code)
-        # logging.info('TEST response body:', test_response.text)
-
-        # if auth_type == 'NTLM':
-        #     from .transportNTLM import TransportNTLM
-        #     es = Elasticsearch(hosts=es_hosts,
-        #                        transport_class=TransportNTLM,
-        #                        ntlm_user= crawler_settings['ELASTICSEARCH_USERNAME'],
-        #                        ntlm_pass= crawler_settings['ELASTICSEARCH_PASSWORD'],
-        #                        timeout=es_timeout)
-        #     return es
-
-        # es_settings = dict()
-        # es_settings['cloud_id'] = es_cloud_id
-        # es_settings['api_key'] = es_api_key
-        # es_settings['hosts'] = es_servers
-        # es_settings['request_timeout'] = es_timeout
-
-        # if 'ELASTICSEARCH_USERNAME' in crawler_settings and 'ELASTICSEARCH_PASSWORD' in crawler_settings:
-        #     es_settings['basic_auth'] = (
-        #         crawler_settings['ELASTICSEARCH_USERNAME'], 
-        #         crawler_settings['ELASTICSEARCH_PASSWORD']
-        #     )
-
-        # if 'ELASTICSEARCH_CA' in crawler_settings:
-        #     import certifi
-        #     es_settings['port'] = 443
-        #     es_settings['use_ssl'] = True
-        #     es_settings['ca_certs'] = crawler_settings['ELASTICSEARCH_CA']['CA_CERT'] or certifi.where()
-        #     es_settings['client_key'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_KEY']
-        #     es_settings['client_cert'] = crawler_settings['ELASTICSEARCH_CA']['CLIENT_CERT']
-            
-        # logging.info('elasticsearch-py version: %s', elasticsearch.__version__)
-        # logging.info('elastic-transport version: %s', elastic_transport.__version__)
-        # logging.info('es_cloud_id: %s', es_cloud_id)
-        # logging.info('es_servers: %s', es_servers)
-        # logging.info('es_api_key: %s', es_api_key)
-        # logging.info('es_timeout: %s', es_timeout)
-        # logging.info('es_username: %s', es_username)
-        # logging.info('es_password: %s', es_password)
-
-        # api_key_decoded = base64.b64decode(es_api_key).decode('utf-8')
-        # api_key_tuple = tuple(api_key_decoded.split(':'))
-
-        # logging.info('api_key_decoded: %s', api_key_decoded)
-        # logging.info('api_key_tuple: %s', api_key_tuple)
-
+        
         try:
             logging.info('Create Elasticsearch client in ScrapyElasticsearchPipeline')
             es = Elasticsearch(
@@ -170,30 +96,11 @@ class ElasticSearchPipeline(object):
                     "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
                 }
             )
-            
             info = es.info()
             logging.info('%s', info)
 
         except Exception as e:
             logging.info('Error creating Elasticsearch client in ScrapyElasticsearchPipeline')
-
-        # try:
-        # logging.info('Create Elasticsearch client B')
-        # es = Elasticsearch(
-        #     cloud_id=es_cloud_id,
-        #     api_key=api_key_tuple,
-        #     request_timeout=es_timeout,
-        #     headers = {
-        #         "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
-        #         "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
-        #     }
-        # )
-        
-        # info = es.info()
-        # logging.info('%s', info)
-
-        # except Exception as e:
-        #     logging.info('Error creating Elasticsearch client B')
 
         return es
 
@@ -265,9 +172,6 @@ class ElasticSearchPipeline(object):
             self.items_buffer = []
 
     def send_items(self):
-
-        # for sendItem in self.items_buffer:
-        #     logging.info('I want to send this to ES8: %s', sendItem)
 
         sendItems = helpers.streaming_bulk(self.es, self.items_buffer)
 
